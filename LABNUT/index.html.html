@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB-NUT Dashboard | Etiquetado Nutricional América Latina</title>
+    <style>
+        :root {
+            /* Light mode colors */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --bg-tertiary: #E8E8E8;
+            --text-primary: #2C3E50;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent-primary: #3498DB;
+            --accent-secondary: #2980B9;
+            --border-color: #E5E5E5;
+            --shadow-sm: rgba(0,0,0,0.1);
+            --shadow-md: rgba(0,0,0,0.15);
+            --shadow-lg: rgba(0,0,0,0.2);
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --bg-tertiary: #2d2d2d;
+            --text-primary: #E0E0E0;
+            --text-secondary: #B0B0B0;
+            --text-tertiary: #808080;
+            --accent-primary: #5DADE2;
+            --accent-secondary: #3498DB;
+            --border-color: #3a3a3a;
+            --shadow-sm: rgba(0,0,0,0.3);
+            --shadow-md: rgba(0,0,0,0.4);
+            --shadow-lg: rgba(0,0,0,0.5);
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --danger: #EC7063;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ============ NAVIGATION BAR ============ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: var(--bg-primary);
+            box-shadow: 0 1px 3px var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-primary);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-primary);
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 8px;
+        }
+
+        .nav-icon:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .theme-icon {
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-icon.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* ============ SECTIONS ============ */
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 60px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============ HOME SECTION ============ */
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 48px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 300;
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 48px;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 64px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 2px solid var(--accent-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1000px;
+            width: 100%;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 16px var(--shadow-sm);
+        }
+
+        .stat-number {
+            font-size: 64px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .map-section {
+            width: 100%;
+            max-width: 1200px;
+            padding: 64px 48px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .section-divider {
+            width: 80px;
+            height: 3px;
+            background: var(--accent-primary);
+            margin: 0 auto 48px;
+        }
+
+        .map-container {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 4px 12px var(--shadow-sm);
+        }
+
+        .map-countries {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .country-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .country-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px var(--shadow-sm);
+            border-color: var(--accent-primary);
+        }
+
+        .country-flag {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .country-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .country-type {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .country-year {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .country-studies {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--accent-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .legend {
+            margin-top: 48px;
+            text-align: center;
+        }
+
+        .legend-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .legend-items {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-color.octagonos { background: #2C3E50; }
+        .legend-color.circulares { background: var(--accent-primary); }
+        .legend-color.semaforos { background: var(--warning); }
+        .legend-color.sin-datos { background: var(--bg-tertiary); }
+
+        .legend-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ============ EXPLORADOR SECTION ============ */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            padding: 32px 24px;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .filter-group {
+            margin-bottom: 32px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-icon {
+            font-size: 16px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--shadow-sm);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .range-container {
+            padding: 8px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+        }
+
+        .btn-clear {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+
+        .btn-clear:hover {
+            background: rgba(231, 76, 60, 0.1);
+            text-decoration: underline;
+        }
+
+        .content {
+            flex: 1;
+            padding: 48px;
+            background: var(--bg-primary);
+        }
+
+        .content-header {
+            margin-bottom: 32px;
+        }
+
+        .content-title {
+            font-size: 32px;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .content-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+        }
+
+        .explorer-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .explorer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-flag-title {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-flag {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-country {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-policy {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .card-year {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .card-divider {
+            height: 2px;
+            background: var(--border-color);
+            margin: 16px 0;
+        }
+
+        .card-studies {
+            margin-bottom: 16px;
+        }
+
+        .studies-total {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .studies-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-left: 8px;
+        }
+
+        .study-item {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .study-item::before {
+            content: '• ';
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .card-highlight {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-primary);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .highlight-text {
+            font-size: 15px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-primary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: gap 0.2s ease;
+        }
+
+        .explorer-card:hover .card-action {
+            gap: 12px;
+        }
+
+        /* ============ COMPARADOR SECTION ============ */
+        .main-content {
+            padding: 64px 48px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .selector-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        .selector-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+        }
+
+        .selectors-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        select.country-select {
+            width: 200px;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .vs-text {
+            font-size: 20px;
+            color: var(--text-tertiary);
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .btn-compare {
+            padding: 16px 48px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .btn-compare:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-md);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .country-column {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+        }
+
+        .column-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .column-flag {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .column-country {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-comp {
+            margin-bottom: 32px;
+        }
+
+        .section-title-comp {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .metric {
+            margin-bottom: 24px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-icon {
+            font-size: 16px;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease-out;
+            width: 0;
+        }
+
+        .progress-fill.high {
+            background: linear-gradient(90deg, var(--success), #2ECC71);
+        }
+
+        .progress-fill.medium {
+            background: linear-gradient(90deg, var(--warning), #F1C40F);
+        }
+
+        .progress-fill.low {
+            background: linear-gradient(90deg, var(--danger), #EC7063);
+        }
+
+        .progress-percentage {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .winner-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .studies-summary {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .studies-total-comp {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .studies-item {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+        }
+
+        .studies-item::before {
+            content: '• ';
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .timeline-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+        }
+
+        .timeline-title {
+            font-size: 24px;
+            font-weight: 400;
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline-line {
+            height: 2px;
+            background: var(--border-color);
+            position: relative;
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            width: 100%;
+            top: -7px;
+        }
+
+        .timeline-point {
+            width: 16px;
+            height: 16px;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.3);
+        }
+
+        .timeline-label {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .timeline-year {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-country {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .timeline-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* ============ EVIDENCIA SECTION ============ */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .filters-bar {
+            background: var(--bg-secondary);
+            padding: 24px 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+            margin-bottom: 32px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkbox-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-filter input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--danger);
+        }
+
+        .matrix-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 48px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+            overflow-x: auto;
+            margin-bottom: 32px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 2px;
+            min-width: 1200px;
+        }
+
+        .matrix-table th {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 16px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .matrix-table th:first-child {
+            text-align: left;
+            min-width: 180px;
+        }
+
+        .matrix-table td {
+            padding: 20px 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .row-label {
+            text-align: left !important;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--bg-tertiary) !important;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .cell-empty {
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
+        }
+
+        .cell-low {
+            background: #F9E79F;
+            color: #7D6608;
+        }
+
+        .cell-medium {
+            background: #A9DFBF;
+            color: #186A3B;
+        }
+
+        .cell-high {
+            background: var(--success);
+            color: white;
+        }
+
+        [data-theme="dark"] .cell-low {
+            background: #7D6608;
+            color: #F9E79F;
+        }
+
+        [data-theme="dark"] .cell-medium {
+            background: #186A3B;
+            color: #A9DFBF;
+        }
+
+        .matrix-table td:hover:not(.row-label) {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .insight-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px var(--shadow-sm);
+            border-left: 4px solid var(--danger);
+        }
+
+        .insight-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .insight-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .insight-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insight-list li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .insight-list li::before {
+            content: '• ';
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .insight-cta {
+            margin-top: 16px;
+            padding: 10px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .insight-cta:hover {
+            background: #C0392B;
+            transform: translateY(-2px);
+        }
+
+        /* ============ TOOLTIP ============ */
+        .tooltip {
+            position: fixed;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 2000;
+            max-width: 250px;
+            box-shadow: 0 4px 12px var(--shadow-lg);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* ============ MOBILE MENU ============ */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 28px;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 2000;
+            padding: 24px;
+            box-shadow: -4px 0 12px var(--shadow-lg);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.show {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .mobile-menu-close {
+            background: transparent;
+            border: none;
+            font-size: 32px;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .mobile-menu-links a {
+            padding: 16px 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .mobile-menu-links a:hover,
+        .mobile-menu-links a.active {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            padding-left: 20px;
+        }
+
+        .mobile-menu-footer {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-label {
+                font-size: 11px;
+            }
+
+            .timeline-country {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Navbar móvil */
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-right {
+                gap: 12px;
+            }
+
+            .nav-icon {
+                font-size: 14px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            /* Hero */
+            .hero {
+                padding: 48px 24px;
+                min-height: auto;
+            }
+
+            .hero-title {
+                font-size: 32px;
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Stats */
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 24px 16px;
+            }
+
+            .stat-number {
+                font-size: 48px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            /* Map section */
+            .map-section {
+                padding: 48px 24px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .map-container {
+                padding: 24px;
+            }
+
+            .map-countries {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .country-card {
+                padding: 16px;
+            }
+
+            .legend-items {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            /* Explorador */
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+                padding: 24px 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .content-title {
+                font-size: 24px;
+            }
+
+            .cards-grid {
+                gap: 16px;
+            }
+
+            .explorer-card {
+                padding: 20px;
+            }
+
+            /* Comparador */
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .selector-section {
+                padding: 32px 24px;
+            }
+
+            .selector-title {
+                font-size: 20px;
+            }
+
+            .selectors-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            select.country-select {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .vs-text {
+                display: none;
+            }
+
+            .btn-compare {
+                width: 100%;
+                padding: 14px 32px;
+            }
+
+            .comparison-grid {
+                gap: 16px;
+            }
+
+            .country-column {
+                padding: 24px;
+            }
+
+            .column-country {
+                font-size: 24px;
+            }
+
+            .timeline-section {
+                padding: 32px 24px;
+            }
+
+            .timeline-title {
+                font-size: 20px;
+            }
+
+            .timeline-point {
+                width: 12px;
+                height: 12px;
+            }
+
+            .timeline-label {
+                font-size: 10px;
+            }
+
+            /* Evidencia */
+            .page-title {
+                font-size: 28px;
+            }
+
+            .page-subtitle {
+                font-size: 16px;
+            }
+
+            .filters-bar {
+                padding: 16px;
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .matrix-container {
+                padding: 16px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .matrix-table {
+                font-size: 12px;
+            }
+
+            .matrix-table th,
+            .matrix-table td {
+                padding: 12px 8px;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .insight-card {
+                padding: 20px;
+            }
+
+            /* Theme toggle */
+            .theme-toggle {
+                padding: 4px;
+            }
+
+            .theme-icon {
+                font-size: 16px;
+                padding: 4px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 40px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .content-title {
+                font-size: 20px;
+            }
+
+            .selector-title {
+                font-size: 18px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .column-country {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo" onclick="showSection('home')">
+            <span class="logo-icon">LAB</span>
+            <span>-NUT</span>
+        </div>
+        <ul class="nav-links">
+            <li><a onclick="showSection('home')" class="active" data-section="home">Inicio</a></li>
+            <li><a onclick="showSection('explorador')" data-section="explorador">Explorador</a></li>
+            <li><a onclick="showSection('comparador')" data-section="comparador">Comparador</a></li>
+            <li><a onclick="showSection('evidencia')" data-section="evidencia">Evidencia</a></li>
+        </ul>
+        <div class="nav-right">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <span class="theme-icon" id="lightIcon">☀</span>
+                <span class="theme-icon" id="darkIcon">☾</span>
+            </div>
+            <span class="nav-icon">ES</span>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <span class="logo-icon">LAB</span>
+                <span>-NUT</span>
+            </div>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+        </div>
+        <div class="mobile-menu-links">
+            <a onclick="showSectionMobile('home')" data-section="home" class="active">Inicio</a>
+            <a onclick="showSectionMobile('explorador')" data-section="explorador">Explorador</a>
+            <a onclick="showSectionMobile('comparador')" data-section="comparador">Comparador</a>
+            <a onclick="showSectionMobile('evidencia')" data-section="evidencia">Evidencia</a>
+        </div>
+        <div class="mobile-menu-footer">
+            <div style="display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 14px;">
+                <span>Modo:</span>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-icon" id="lightIconMobile">☀</span>
+                    <span class="theme-icon" id="darkIconMobile">☾</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: HOME -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <h1 class="hero-title">ETIQUETADO NUTRICIONAL<br>EN AMÉRICA LATINA</h1>
+            <p class="hero-subtitle">Evidencia científica 2014-2024</p>
+            
+            <div class="hero-ctas">
+                <button class="btn btn-primary" onclick="showSection('explorador')">
+                    Explorar por país
+                    <span>↓</span>
+                </button>
+                <button class="btn btn-secondary" onclick="showSection('comparador')">
+                    Comparar políticas
+                    <span>→</span>
+                </button>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number">147</div>
+                    <div class="stat-label">Estudios</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Países</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">45</div>
+                    <div class="stat-label">Revistas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Años</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-section">
+            <h2 class="section-title">Políticas implementadas por país</h2>
+            <div class="section-divider"></div>
+            
+            <div class="map-container">
+                <div class="map-countries">
+                    <div class="country-card" data-tooltip="Chile • 2016 • Octágonos negros • 89 estudios">
+                        <div class="country-studies">89</div>
+                        <div class="country-flag">CHL</div>
+                        <div class="country-name">Chile</div>
+                        <div class="country-type">Octágonos negros</div>
+                        <div class="country-year">Implementación: 2016</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="México • 2020 • Octágonos negros • 34 estudios">
+                        <div class="country-studies">34</div>
+                        <div class="country-flag">MEX</div>
+                        <div class="country-name">México</div>
+                        <div class="country-type">Octágonos negros</div>
+                        <div class="country-year">Implementación: 2020</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Colombia • 2022 • Sellos circulares • 8 estudios">
+                        <div class="country-studies">8</div>
+                        <div class="country-flag">COL</div>
+                        <div class="country-name">Colombia</div>
+                        <div class="country-type">Sellos circulares</div>
+                        <div class="country-year">Implementación: 2022</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Perú • 2019 • Octágonos negros • 28 estudios">
+                        <div class="country-studies">28</div>
+                        <div class="country-flag">PER</div>
+                        <div class="country-name">Perú</div>
+                        <div class="country-type">Octágonos negros</div>
+                        <div class="country-year">Implementación: 2019</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Uruguay • 2018 • Octágonos negros • 22 estudios">
+                        <div class="country-studies">22</div>
+                        <div class="country-flag">URY</div>
+                        <div class="country-name">Uruguay</div>
+                        <div class="country-type">Octágonos negros</div>
+                        <div class="country-year">Implementación: 2018</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Ecuador • 2014 • Semáforo nutricional • 18 estudios">
+                        <div class="country-studies">18</div>
+                        <div class="country-flag">ECU</div>
+                        <div class="country-name">Ecuador</div>
+                        <div class="country-type">Semáforo nutricional</div>
+                        <div class="country-year">Implementación: 2014</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Argentina • 2021 • Octágonos negros • 12 estudios">
+                        <div class="country-studies">12</div>
+                        <div class="country-flag">ARG</div>
+                        <div class="country-name">Argentina</div>
+                        <div class="country-type">Octágonos negros</div>
+                        <div class="country-year">Implementación: 2021</div>
+                    </div>
+
+                    <div class="country-card" data-tooltip="Brasil • 2022 • Lupa • 4 estudios">
+                        <div class="country-studies">4</div>
+                        <div class="country-flag">BRA</div>
+                        <div class="country-name">Brasil</div>
+                        <div class="country-type">Lupa (frontal)</div>
+                        <div class="country-year">Implementación: 2022</div>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-title">Tipos de política implementados</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color octagonos"></div>
+                            <span class="legend-text">Advertencias (octágonos/sellos)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color semaforos"></div>
+                            <span class="legend-text">Informativos (semáforos)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color sin-datos"></div>
+                            <span class="legend-text">Sin política</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: EXPLORADOR -->
+    <section id="explorador" class="section">
+        <div class="main-container">
+            <aside class="sidebar">
+                <h2 class="sidebar-title">Filtros</h2>
+
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <span class="filter-icon">◉</span>
+                        País
+                    </label>
+                    <select>
+                        <option>Todos los países</option>
+                        <option>Chile</option>
+                        <option>México</option>
+                        <option>Colombia</option>
+                        <option>Perú</option>
+                        <option>Uruguay</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <span class="filter-icon">◈</span>
+                        Tipo de política
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Advertencias (octágonos)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Sellos circulares</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Semáforos</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <span class="filter-icon">◷</span>
+                        Año implementación
+                    </label>
+                    <div class="range-container">
+                        <input type="range" min="2014" max="2024" value="2020">
+                        <div class="range-labels">
+                            <span>2014</span>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <span class="filter-icon">◐</span>
+                        Outcome medido
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Cambio en consumo</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Reformulación</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" checked>
+                            <span class="checkbox-label">Comprensión</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-clear" onclick="clearFilters()">Limpiar filtros</button>
+            </aside>
+
+            <main class="content">
+                <div class="content-header">
+                    <h1 class="content-title">Explorador por País</h1>
+                    <p class="content-subtitle">Explora la evidencia científica disponible para cada país</p>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="explorer-card">
+                        <div class="card-header">
+                            <div class="card-flag-title">
+                                <span class="card-flag">CHL</span>
+                                <h3 class="card-country">CHILE</h3>
+                            </div>
+                        </div>
+                        <p class="card-policy">Política: Octágonos negros</p>
+                        <p class="card-year">Implementación: 2016</p>
+                        
+                        <div class="card-divider"></div>
+                        
+                        <div class="card-studies">
+                            <div class="studies-total">
+                                <span>◉</span>
+                                <span>89 estudios</span>
+                            </div>
+                            <div class="studies-breakdown">
+                                <div class="study-item">45 Consumo</div>
+                                <div class="study-item">28 Reformulación</div>
+                                <div class="study-item">16 Comprensión</div>
+                            </div>
+                        </div>
+
+                        <div class="card-highlight">
+                            <p class="highlight-text">"↓23% compra de bebidas azucaradas tras implementación"</p>
+                        </div>
+
+                        <div class="card-action">
+                            <span>Ver detalles</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <div class="explorer-card">
+                        <div class="card-header">
+                            <div class="card-flag-title">
+                                <span class="card-flag">MEX</span>
+                                <h3 class="card-country">MÉXICO</h3>
+                            </div>
+                        </div>
+                        <p class="card-policy">Política: Octágonos negros</p>
+                        <p class="card-year">Implementación: 2020</p>
+                        
+                        <div class="card-divider"></div>
+                        
+                        <div class="card-studies">
+                            <div class="studies-total">
+                                <span>◉</span>
+                                <span>34 estudios</span>
+                            </div>
+                            <div class="studies-breakdown">
+                                <div class="study-item">18 Consumo</div>
+                                <div class="study-item">11 Reformulación</div>
+                                <div class="study-item">5 Comprensión</div>
+                            </div>
+                        </div>
+
+                        <div class="card-highlight">
+                            <p class="highlight-text">"↓15% compra de cereales azucarados infantiles"</p>
+                        </div>
+
+                        <div class="card-action">
+                            <span>Ver detalles</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <div class="explorer-card">
+                        <div class="card-header">
+                            <div class="card-flag-title">
+                                <span class="card-flag">COL</span>
+                                <h3 class="card-country">COLOMBIA</h3>
+                            </div>
+                        </div>
+                        <p class="card-policy">Política: Sellos circulares</p>
+                        <p class="card-year">Implementación: 2022</p>
+                        
+                        <div class="card-divider"></div>
+                        
+                        <div class="card-studies">
+                            <div class="studies-total">
+                                <span>◉</span>
+                                <span>8 estudios</span>
+                            </div>
+                            <div class="studies-breakdown">
+                                <div class="study-item">3 Consumo</div>
+                                <div class="study-item">2 Reformulación</div>
+                                <div class="study-item">3 Comprensión</div>
+                            </div>
+                        </div>
+
+                        <div class="card-highlight">
+                            <p class="highlight-text">"Política reciente - evidencia en construcción"</p>
+                        </div>
+
+                        <div class="card-action">
+                            <span>Ver detalles</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <div class="explorer-card">
+                        <div class="card-header">
+                            <div class="card-flag-title">
+                                <span class="card-flag">PER</span>
+                                <h3 class="card-country">PERÚ</h3>
+                            </div>
+                        </div>
+                        <p class="card-policy">Política: Octágonos negros</p>
+                        <p class="card-year">Implementación: 2019</p>
+                        
+                        <div class="card-divider"></div>
+                        
+                        <div class="card-studies">
+                            <div class="studies-total">
+                                <span>◉</span>
+                                <span>28 estudios</span>
+                            </div>
+                            <div class="studies-breakdown">
+                                <div class="study-item">15 Consumo</div>
+                                <div class="study-item">9 Reformulación</div>
+                                <div class="study-item">4 Comprensión</div>
+                            </div>
+                        </div>
+
+                        <div class="card-highlight">
+                            <p class="highlight-text">"↑82% comprensión correcta de advertencias"</p>
+                        </div>
+
+                        <div class="card-action">
+                            <span>Ver detalles</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- SECTION: COMPARADOR -->
+    <section id="comparador" class="section">
+        <div class="main-content">
+            <div class="selector-section">
+                <h2 class="selector-title">Selecciona hasta 3 países para comparar</h2>
+                
+                <div class="selectors-row">
+                    <select class="country-select">
+                        <option value="chile" selected>Chile</option>
+                        <option value="mexico">México</option>
+                        <option value="colombia">Colombia</option>
+                    </select>
+
+                    <span class="vs-text">vs</span>
+
+                    <select class="country-select">
+                        <option value="chile">Chile</option>
+                        <option value="mexico" selected>México</option>
+                        <option value="colombia">Colombia</option>
+                    </select>
+
+                    <span class="vs-text">vs</span>
+
+                    <select class="country-select">
+                        <option value="chile">Chile</option>
+                        <option value="mexico">México</option>
+                        <option value="colombia" selected>Colombia</option>
+                    </select>
+                </div>
+
+                <button class="btn-compare" onclick="animateComparison()">Comparar →</button>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="country-column">
+                    <div class="column-header">
+                        <div class="column-flag">CHL</div>
+                        <h3 class="column-country">CHILE</h3>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Características</h4>
+                        <div class="info-row">
+                            <span class="info-label">Tipo:</span>
+                            <span class="info-value">Octágonos negros</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Año:</span>
+                            <span class="info-value">2016</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">N° sellos:</span>
+                            <span class="info-value">4</span>
+                        </div>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Efectividad</h4>
+                        
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↓</span>
+                                <span>Consumo</span>
+                                <span class="winner-badge">Mayor</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill high" data-value="82"></div>
+                                </div>
+                                <span class="progress-percentage">82%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↻</span>
+                                <span>Reformulación</span>
+                                <span class="winner-badge">Mayor</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill high" data-value="74"></div>
+                                </div>
+                                <span class="progress-percentage">74%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">◉</span>
+                                <span>Comprensión</span>
+                                <span class="winner-badge">Mayor</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill high" data-value="88"></div>
+                                </div>
+                                <span class="progress-percentage">88%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="studies-summary">
+                        <div class="studies-total-comp">89 estudios totales</div>
+                        <div class="studies-item">45 Consumo</div>
+                        <div class="studies-item">28 Reformulación</div>
+                        <div class="studies-item">16 Comprensión</div>
+                    </div>
+                </div>
+
+                <div class="country-column">
+                    <div class="column-header">
+                        <div class="column-flag">MEX</div>
+                        <h3 class="column-country">MÉXICO</h3>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Características</h4>
+                        <div class="info-row">
+                            <span class="info-label">Tipo:</span>
+                            <span class="info-value">Octágonos negros</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Año:</span>
+                            <span class="info-value">2020</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">N° sellos:</span>
+                            <span class="info-value">5</span>
+                        </div>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Efectividad</h4>
+                        
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↓</span>
+                                <span>Consumo</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill medium" data-value="65"></div>
+                                </div>
+                                <span class="progress-percentage">65%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↻</span>
+                                <span>Reformulación</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill medium" data-value="58"></div>
+                                </div>
+                                <span class="progress-percentage">58%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">◉</span>
+                                <span>Comprensión</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill high" data-value="72"></div>
+                                </div>
+                                <span class="progress-percentage">72%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="studies-summary">
+                        <div class="studies-total-comp">34 estudios totales</div>
+                        <div class="studies-item">18 Consumo</div>
+                        <div class="studies-item">11 Reformulación</div>
+                        <div class="studies-item">5 Comprensión</div>
+                    </div>
+                </div>
+
+                <div class="country-column">
+                    <div class="column-header">
+                        <div class="column-flag">COL</div>
+                        <h3 class="column-country">COLOMBIA</h3>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Características</h4>
+                        <div class="info-row">
+                            <span class="info-label">Tipo:</span>
+                            <span class="info-value">Sellos circulares</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Año:</span>
+                            <span class="info-value">2022</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">N° sellos:</span>
+                            <span class="info-value">3</span>
+                        </div>
+                    </div>
+
+                    <div class="section-comp">
+                        <h4 class="section-title-comp">Efectividad</h4>
+                        
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↓</span>
+                                <span>Consumo</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill low" data-value="30"></div>
+                                </div>
+                                <span class="progress-percentage">30%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">↻</span>
+                                <span>Reformulación</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill low" data-value="25"></div>
+                                </div>
+                                <span class="progress-percentage">25%</span>
+                            </div>
+                        </div>
+
+                        <div class="metric">
+                            <div class="metric-label">
+                                <span class="metric-icon">◉</span>
+                                <span>Comprensión</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill medium" data-value="55"></div>
+                                </div>
+                                <span class="progress-percentage">55%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="studies-summary">
+                        <div class="studies-total-comp">8 estudios totales</div>
+                        <div class="studies-item">3 Consumo</div>
+                        <div class="studies-item">2 Reformulación</div>
+                        <div class="studies-item">3 Comprensión</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-section">
+                <h2 class="timeline-title">Línea de tiempo de implementación</h2>
+                <div class="timeline">
+                    <div class="timeline-line">
+                        <div class="timeline-points">
+                            <div class="timeline-point" style="left: 20%;">
+                                <div class="timeline-label">
+                                    <div class="timeline-year">2016</div>
+                                    <div class="timeline-country">Chile</div>
+                                    <div class="timeline-type">Octágonos</div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 60%;">
+                                <div class="timeline-label">
+                                    <div class="timeline-year">2020</div>
+                                    <div class="timeline-country">México</div>
+                                    <div class="timeline-type">Octágonos</div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 80%;">
+                                <div class="timeline-label">
+                                    <div class="timeline-year">2022</div>
+                                    <div class="timeline-country">Colombia</div>
+                                    <div class="timeline-type">Circulares</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: EVIDENCIA -->
+    <section id="evidencia" class="section">
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Mapa de Evidencia</h1>
+                <p class="page-subtitle">Visualización de brechas de investigación en etiquetado nutricional</p>
+            </div>
+
+            <div class="filters-bar">
+                <div class="filter-item">
+                    <span class="filter-label">Mostrar:</span>
+                    <select>
+                        <option>Todos los estudios</option>
+                        <option>Por tipo de política</option>
+                        <option>Por año</option>
+                    </select>
+                </div>
+
+                <label class="checkbox-filter">
+                    <input type="checkbox" id="gapsOnly">
+                    <span class="filter-label">Solo brechas críticas (≤2 estudios)</span>
+                </label>
+            </div>
+
+            <div class="matrix-container">
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Outcome / País</th>
+                            <th>CHL<br>Chile</th>
+                            <th>MEX<br>México</th>
+                            <th>PER<br>Perú</th>
+                            <th>URY<br>Uruguay</th>
+                            <th>ARG<br>Argentina</th>
+                            <th>COL<br>Colombia</th>
+                            <th>BRA<br>Brasil</th>
+                            <th>ECU<br>Ecuador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-label">Cambio en consumo</td>
+                            <td class="cell-high" data-studies="45" data-country="Chile" data-outcome="Consumo">45</td>
+                            <td class="cell-high" data-studies="18" data-country="México" data-outcome="Consumo">18</td>
+                            <td class="cell-high" data-studies="15" data-country="Perú" data-outcome="Consumo">15</td>
+                            <td class="cell-high" data-studies="12" data-country="Uruguay" data-outcome="Consumo">12</td>
+                            <td class="cell-medium" data-studies="5" data-country="Argentina" data-outcome="Consumo">5</td>
+                            <td class="cell-medium" data-studies="3" data-country="Colombia" data-outcome="Consumo">3</td>
+                            <td class="cell-medium" data-studies="4" data-country="Brasil" data-outcome="Consumo">4</td>
+                            <td class="cell-medium" data-studies="6" data-country="Ecuador" data-outcome="Consumo">6</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">Reformulación de productos</td>
+                            <td class="cell-high" data-studies="28" data-country="Chile" data-outcome="Reformulación">28</td>
+                            <td class="cell-high" data-studies="11" data-country="México" data-outcome="Reformulación">11</td>
+                            <td class="cell-medium" data-studies="9" data-country="Perú" data-outcome="Reformulación">9</td>
+                            <td class="cell-medium" data-studies="7" data-country="Uruguay" data-outcome="Reformulación">7</td>
+                            <td class="cell-low" data-studies="2" data-country="Argentina" data-outcome="Reformulación">2</td>
+                            <td class="cell-low" data-studies="2" data-country="Colombia" data-outcome="Reformulación">2</td>
+                            <td class="cell-low" data-studies="1" data-country="Brasil" data-outcome="Reformulación">1</td>
+                            <td class="cell-medium" data-studies="3" data-country="Ecuador" data-outcome="Reformulación">3</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">Comprensión del consumidor</td>
+                            <td class="cell-high" data-studies="16" data-country="Chile" data-outcome="Comprensión">16</td>
+                            <td class="cell-medium" data-studies="5" data-country="México" data-outcome="Comprensión">5</td>
+                            <td class="cell-medium" data-studies="4" data-country="Perú" data-outcome="Comprensión">4</td>
+                            <td class="cell-medium" data-studies="3" data-country="Uruguay" data-outcome="Comprensión">3</td>
+                            <td class="cell-medium" data-studies="3" data-country="Argentina" data-outcome="Comprensión">3</td>
+                            <td class="cell-medium" data-studies="3" data-country="Colombia" data-outcome="Comprensión">3</td>
+                            <td class="cell-low" data-studies="2" data-country="Brasil" data-outcome="Comprensión">2</td>
+                            <td class="cell-low" data-studies="1" data-country="Ecuador" data-outcome="Comprensión">1</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">Impacto en salud (IMC/Obesidad)</td>
+                            <td class="cell-medium" data-studies="5" data-country="Chile" data-outcome="Salud">5</td>
+                            <td class="cell-low" data-studies="2" data-country="México" data-outcome="Salud">2</td>
+                            <td class="cell-low" data-studies="1" data-country="Perú" data-outcome="Salud">1</td>
+                            <td class="cell-empty" data-studies="0" data-country="Uruguay" data-outcome="Salud">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Argentina" data-outcome="Salud">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Colombia" data-outcome="Salud">0</td>
+                            <td class="cell-low" data-studies="1" data-country="Brasil" data-outcome="Salud">1</td>
+                            <td class="cell-empty" data-studies="0" data-country="Ecuador" data-outcome="Salud">0</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">Inequidades (NSE, rural/urbano)</td>
+                            <td class="cell-medium" data-studies="3" data-country="Chile" data-outcome="Inequidades">3</td>
+                            <td class="cell-low" data-studies="1" data-country="México" data-outcome="Inequidades">1</td>
+                            <td class="cell-empty" data-studies="0" data-country="Perú" data-outcome="Inequidades">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Uruguay" data-outcome="Inequidades">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Argentina" data-outcome="Inequidades">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Colombia" data-outcome="Inequidades">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Brasil" data-outcome="Inequidades">0</td>
+                            <td class="cell-empty" data-studies="0" data-country="Ecuador" data-outcome="Inequidades">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box cell-high"></div>
+                        <span class="legend-text">10+ estudios</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box cell-medium"></div>
+                        <span class="legend-text">3-9 estudios</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box cell-low"></div>
+                        <span class="legend-text">1-2 estudios</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box cell-empty"></div>
+                        <span class="legend-text">0 estudios</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon">⚠</div>
+                    <h3 class="insight-title">Brechas Críticas por Tema</h3>
+                    <ul class="insight-list">
+                        <li>Salud (IMC): 5/8 países sin datos</li>
+                        <li>Inequidades: 6/8 países sin datos</li>
+                        <li>Efectos a largo plazo: limitada evidencia</li>
+                        <li>Poblaciones vulnerables: sub-estudiadas</li>
+                    </ul>
+                    <button class="insight-cta">Ver detalles →</button>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">◉</div>
+                    <h3 class="insight-title">Brechas por País</h3>
+                    <ul class="insight-list">
+                        <li>Colombia: reformulación (2 estudios)</li>
+                        <li>Brasil: evidencia general limitada</li>
+                        <li>Argentina: implementación reciente</li>
+                        <li>Ecuador: comprensión (1 estudio)</li>
+                    </ul>
+                    <button class="insight-cta">Explorar países →</button>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">↑</div>
+                    <h3 class="insight-title">Oportunidades de Investigación</h3>
+                    <ul class="insight-list">
+                        <li>Estudios longitudinales de salud</li>
+                        <li>Análisis de equidad en impacto</li>
+                        <li>Comparación experimental entre modelos</li>
+                        <li>Contextos rurales y poblaciones indígenas</li>
+                    </ul>
+                    <button class="insight-cta">Descargar agenda →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOOLTIP -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcons(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+        }
+
+        function updateThemeIcons(theme) {
+            const lightIcon = document.getElementById('lightIcon');
+            const darkIcon = document.getElementById('darkIcon');
+            const lightIconMobile = document.getElementById('lightIconMobile');
+            const darkIconMobile = document.getElementById('darkIconMobile');
+            
+            if (theme === 'dark') {
+                lightIcon.classList.remove('active');
+                darkIcon.classList.add('active');
+                if (lightIconMobile) lightIconMobile.classList.remove('active');
+                if (darkIconMobile) darkIconMobile.classList.add('active');
+            } else {
+                darkIcon.classList.remove('active');
+                lightIcon.classList.add('active');
+                if (darkIconMobile) darkIconMobile.classList.remove('active');
+                if (lightIconMobile) lightIconMobile.classList.add('active');
+            }
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            menu.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            // Prevenir scroll del body cuando el menú está abierto
+            if (menu.classList.contains('show')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            menu.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function showSectionMobile(sectionId) {
+            showSection(sectionId);
+            closeMobileMenu();
+            
+            // Actualizar menú móvil activo
+            document.querySelectorAll('.mobile-menu-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            window.scrollTo(0, 0);
+            
+            if (sectionId === 'comparador') {
+                setTimeout(animateComparison, 300);
+            }
+        }
+
+        // Tooltip functionality
+        const tooltip = document.getElementById('tooltip');
+        
+        document.querySelectorAll('.country-card').forEach(card => {
+            card.addEventListener('mouseenter', (e) => {
+                const text = card.getAttribute('data-tooltip');
+                if (text) {
+                    tooltip.textContent = text;
+                    tooltip.classList.add('show');
+                }
+            });
+
+            card.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.pageX + 15 + 'px';
+                tooltip.style.top = e.pageY + 15 + 'px';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+        });
+
+        document.querySelectorAll('.matrix-table td:not(.row-label)').forEach(cell => {
+            cell.addEventListener('mouseenter', (e) => {
+                const studies = cell.getAttribute('data-studies');
+                const country = cell.getAttribute('data-country');
+                const outcome = cell.getAttribute('data-outcome');
+                
+                tooltip.textContent = `${country} × ${outcome}: ${studies} estudios`;
+                tooltip.classList.add('show');
+            });
+
+            cell.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.pageX + 15 + 'px';
+                tooltip.style.top = e.pageY + 15 + 'px';
+            });
+
+            cell.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+
+            cell.addEventListener('click', () => {
+                const country = cell.getAttribute('data-country');
+                const outcome = cell.getAttribute('data-outcome');
+                const studies = cell.getAttribute('data-studies');
+                alert(`Ver ${studies} estudios sobre ${outcome} en ${country}`);
+            });
+        });
+
+        // Clear filters
+        function clearFilters() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+            document.querySelectorAll('input[type="range"]').forEach(range => range.value = 2020);
+        }
+
+        // Comparison animation
+        function animateComparison() {
+            const progressFills = document.querySelectorAll('.progress-fill');
+            
+            progressFills.forEach(fill => {
+                fill.style.width = '0%';
+            });
+
+            setTimeout(() => {
+                progressFills.forEach(fill => {
+                    const value = fill.getAttribute('data-value');
+                    fill.style.width = value + '%';
+                });
+            }, 100);
+        }
+
+        // Gaps filter
+        document.getElementById('gapsOnly').addEventListener('change', (e) => {
+            const cells = document.querySelectorAll('.matrix-table td:not(.row-label)');
+            if (e.target.checked) {
+                cells.forEach(cell => {
+                    const studies = parseInt(cell.getAttribute('data-studies'));
+                    if (studies > 2) {
+                        cell.style.opacity = '0.2';
+                    }
+                });
+            } else {
+                cells.forEach(cell => {
+                    cell.style.opacity = '1';
+                });
+            }
+        });
+
+        // Initial load
+        window.addEventListener('load', () => {
+            initTheme();
+            showSection('home');
+        });
+    </script>
+</body>
+</html>
